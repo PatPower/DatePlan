@@ -1,8 +1,6 @@
-# DatePlan - Couples Activity Planner 💕
+# DatePlan - Couples Activity Planner
 
 A beautiful and intuitive web application designed for couples to discover, organize, and plan activities together. Features a drag-and-drop calendar interface and automatic link parsing for seamless activity creation.
-
-![DatePlan Screenshot](https://via.placeholder.com/800x400/6366f1/ffffff?text=DatePlan+-+Couples+Activity+Planner)
 
 ## ✨ Features
 
