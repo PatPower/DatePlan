@@ -67,10 +67,25 @@ body {
     color: var(--primary-color);
 }
 
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
 .logo h1 {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.logo-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    line-height: 1;
+    margin: 0;
 }
 
 .nav-tabs {
@@ -377,31 +392,19 @@ body {
 .location-link {
     color: var(--primary-color);
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    transition: color 0.2s ease;
+    transition: color 0.2s;
 }
 
 .location-link:hover {
-    color: var(--primary-color-dark);
+    color: var(--primary-hover);
     text-decoration: underline;
 }
 
-.location-link-icon {
-    font-size: 0.7em;
-    opacity: 0.7;
+.location-link i {
+    font-size: 0.8em;
+    margin-left: 0.25rem;
 }
 
-.location-link:hover .location-link-icon {
-    opacity: 1;
-}
-
-.location-text {
-    color: var(--text-secondary);
-}
-
-/* Small location links for mobile selection */
 .location-link-small {
     color: var(--primary-color);
     text-decoration: none;
@@ -419,8 +422,32 @@ body {
     font-weight: normal;
 }
 
-.activity-detail .location-link:hover {
+/* Enhanced event modal location styling */
+.event-detail-row .location-link {
     color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(99, 102, 241, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.event-detail-row .location-link:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-hover);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+}
+
+.event-detail-row .location-link i {
+    font-size: 0.8em;
+    opacity: 0.7;
 }
 
 /* Calendar Styles */
@@ -755,137 +782,258 @@ body {
 
 .history-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
     gap: 1.5rem;
+    margin-top: 1rem;
 }
 
-/* History card specific styles */
 .history-card {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
+    background: var(--bg-card);
     border-radius: var(--border-radius-lg);
-    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    padding: 0;
+    box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
+    overflow: hidden;
     position: relative;
-    opacity: 0.9;
 }
 
 .history-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    opacity: 1;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
 }
 
 .history-card.completed {
-    border-left: 4px solid var(--success-color);
-    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(16, 185, 129, 0.05) 100%);
 }
 
-.history-card.planned {
-    border-left: 4px solid var(--warning-color);
-    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(245, 158, 11, 0.05) 100%);
+.history-card.completed::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--success-color) 0%, #34d399 100%);
 }
 
 .history-card.scheduled {
-    border-left: 4px solid var(--primary-color);
-    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(99, 102, 241, 0.05) 100%);
 }
 
-.history-card-status {
+.history-card.scheduled::before {
+    content: '';
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #8b5cf6 100%);
+}
+
+.history-card-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding: 1.5rem 1.5rem 0 1.5rem;
+}
+
+.history-card-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, #f1f5f9 100%);
+    border-radius: var(--border-radius);
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.history-date-month {
+    font-size: 0.7rem;
     font-weight: 600;
+    color: var(--text-secondary);
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
 }
 
-.history-card-status.completed {
-    background: var(--success-color);
-    color: white;
+.history-date-day {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);    line-height: 1;
+    margin-top: 0.25rem;
 }
 
-.history-card-status.planned {
-    background: var(--warning-color);
-    color: white;
+.history-card-main {
+    flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
 }
 
-.history-card-status.scheduled {
-    background: var(--primary-color);
-    color: white;
-}
-
-.history-card-status.archived {
-    background-color: #6b7280 !important;
-    color: white;
+.history-card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .history-card-title {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    padding-right: 4rem; /* Space for status badge */
+    margin: 0;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    flex: 1;
+    min-width: 0;
 }
 
-.history-card-date {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.history-status {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
 }
 
-.history-card-location {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.history-card-location i {
-    color: var(--primary-color);
-}
-
-.history-card-duration {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-.history-card-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.history-card-category {
-    background: var(--primary-color);
+.history-status.completed {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(52, 211, 153, 0.9) 100%);
     color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.history-status.scheduled {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.history-card-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    padding: 0 1.5rem;
+}
+
+.history-time {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(99, 102, 241, 0.08);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
     font-weight: 500;
+}
+
+.history-time::before {
+    content: '🕐';
+    font-size: 0.9em;
+}
+
+.history-time {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.history-location {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    background: rgba(34, 197, 94, 0.08);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.history-location i {
+    color: var(--success-color);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.history-location .location-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.history-location .location-link:hover {
+    color: var(--success-color);
+    text-decoration: underline;
 }
 
 .history-card-actions {
     display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    background: rgba(249, 250, 251, 0.5);
+    border-top: 1px solid rgba(229, 231, 235, 0.3);
 }
 
-.history-card-actions .btn-small {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.8rem;
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    background: var(--bg-card);
+    border-radius: var(--border-radius-lg);
+    border: 2px dashed var(--border-color);
+    margin: 1rem 0;
+}
+
+.empty-state::before {
+    content: '📅';
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .history-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .history-card-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .history-status {
+        align-self: flex-start;
+    }
+    
+    .history-card-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .history-card-actions {
+        justify-content: flex-start;
+    }
 }
 
 /* Modal Styles */
@@ -2151,4 +2299,83 @@ body {
 #activity-excitement:focus {
     border-color: #f59e0b;
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* Enhanced button styling for history cards */
+.history-card .btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.history-card .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+}
+
+.history-card .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
+}
+
+.history-card .btn-secondary {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-secondary);
+    border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.history-card .btn-secondary:hover {
+    background: rgba(107, 114, 128, 0.15);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+/* Completed card special styling */
+.history-card.completed .history-card-date {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.history-card.completed .history-date-day {
+    color: var(--success-color);
+}
+
+/* Scheduled card special styling */
+.history-card.scheduled .history-card-date {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.history-card.scheduled .history-date-day {
+    color: var(--primary-color);
+}
+
+/* Add subtle animations and micro-interactions */
+.history-card-title {
+    transition: color 0.2s ease;
+}
+
+.history-card:hover .history-card-title {
+    color: var(--primary-color);
+}
+
+.history-card.completed:hover .history-card-title {
+    color: var(--success-color);
+}
+
+/* Add subtle glow effects */
+.history-card.completed:hover {
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+.history-card.scheduled:hover {
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(99, 102, 241, 0.1);
 }
