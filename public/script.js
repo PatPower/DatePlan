@@ -1688,12 +1688,10 @@ function showEventDetails(event) {
     }
 
     // Update event title
-    document.getElementById('event-title').textContent = event.title;
-
-    // Update category badge
+    document.getElementById('event-title').textContent = event.title;    // Update category badge
     const categoryBadge = document.getElementById('event-category');
     if (event.category) {
-        categoryBadge.textContent = event.category;
+        categoryBadge.textContent = `Category: ${event.category}`;
         categoryBadge.className = `category-badge category-${event.category.toLowerCase().replace(/\s+/g, '-').replace('&', '')}`;
         categoryBadge.style.display = 'inline-block';
     } else {
@@ -1703,21 +1701,21 @@ function showEventDetails(event) {
     // Update excitement badge
     const excitementBadge = document.getElementById('event-excitement');
     if (activity && activity.excitement > 0) {
-        excitementBadge.textContent = `${activity.excitement}/10`;
+        excitementBadge.textContent = `Excitement: ${activity.excitement}/10`;
         excitementBadge.style.display = 'inline-flex';
     } else {
         excitementBadge.style.display = 'none';
-    }
-
-    // Update time
+    }// Update time
     document.getElementById('event-time').textContent =
-        `${startDate.toLocaleDateString()} • ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}`;    // Update location with clickable link
+        `${startDate.toLocaleDateString()} at ${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+    // Update location with clickable link
     const locationRow = document.getElementById('event-location-row');
     const locationSpan = document.getElementById('event-location');
     const location = (activity && activity.location) || event.location || event.activity_location || event.address || '';
     if (location) {
         const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
-        locationSpan.innerHTML = `<a href="${googleMapsUrl}" target="_blank" class="location-link">${location}</a>`;
+        locationSpan.innerHTML = `<a href="${googleMapsUrl}" target="_blank" class="location-link">${location} <i class="fas fa-external-link-alt"></i></a>`;
         locationRow.style.display = 'flex';
     } else {
         locationRow.style.display = 'none';
@@ -1729,9 +1727,12 @@ function showEventDetails(event) {
     const minutes = durationMinutes % 60;
     let durationText = '';
     if (hours > 0) {
-        durationText = `${hours}h ${minutes}m`;
+        durationText = hours === 1 ? `${hours} hour` : `${hours} hours`;
+        if (minutes > 0) {
+            durationText += ` and ${minutes} minutes`;
+        }
     } else {
-        durationText = `${minutes} minutes`;
+        durationText = minutes === 1 ? `${minutes} minute` : `${minutes} minutes`;
     }
     document.getElementById('event-duration').textContent = durationText;
 
@@ -1739,21 +1740,33 @@ function showEventDetails(event) {
     const costRow = document.getElementById('event-cost-row');
     const costSpan = document.getElementById('event-cost');
     if (activity && activity.estimated_cost > 0) {
-        costSpan.textContent = `$${activity.estimated_cost}`;
+        costSpan.textContent = `$${activity.estimated_cost.toFixed(2)}`;
         costRow.style.display = 'flex';
     } else {
         costRow.style.display = 'none';
     }
 
-    // Update description
-    const descriptionDiv = document.getElementById('event-description');
-    if (activity && activity.description) {
-        descriptionDiv.textContent = activity.description;
-        descriptionDiv.style.display = 'block';
-    } else if (event.notes) {
-        descriptionDiv.textContent = event.notes;
-        descriptionDiv.style.display = 'block';
+    // Update notes/description
+    const notesRow = document.getElementById('event-notes-row');
+    const notesSpan = document.getElementById('event-notes');
+    let notesText = '';
+
+    if (event.notes && event.notes.trim()) {
+        notesText = event.notes.trim();
+    } else if (activity && activity.description && activity.description.trim()) {
+        notesText = activity.description.trim();
+    }
+
+    if (notesText) {
+        notesSpan.textContent = notesText;
+        notesRow.style.display = 'flex';
     } else {
+        notesRow.style.display = 'none';
+    }
+
+    // Remove the old description div (since we're now using the notes row)
+    const descriptionDiv = document.getElementById('event-description');
+    if (descriptionDiv) {
         descriptionDiv.style.display = 'none';
     }
 
