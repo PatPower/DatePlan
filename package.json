@@ -1,5 +1,5 @@
 {
-  "name": "planidea",
+  "name": "dateplan",
   "version": "1.0.0",
   "description": "A couples activity planning web app with calendar and drag-and-drop functionality",
   "main": "server.js",
@@ -8,7 +8,13 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["couples", "planning", "calendar", "activities", "nodejs"],
+  "keywords": [
+    "couples",
+    "planning",
+    "calendar",
+    "activities",
+    "nodejs"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {

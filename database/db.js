@@ -6,8 +6,8 @@ class Database {
     if (Database.instance) {
       return Database.instance;
     }
-    
-    this.db = new sqlite3.Database(path.join(__dirname, 'planidea.db'), (err) => {
+
+    this.db = new sqlite3.Database(path.join(__dirname, 'dateplan.db'), (err) => {
       if (err) {
         console.error('Error opening database:', err);
       } else {
@@ -15,7 +15,7 @@ class Database {
         this.init();
       }
     });
-    
+
     Database.instance = this;
   }
 

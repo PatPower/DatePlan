@@ -1,8 +1,8 @@
-# PlanIdea - Couples Activity Planner 💕
+# DatePlan - Couples Activity Planner 💕
 
 A beautiful and intuitive web application designed for couples to discover, organize, and plan activities together. Features a drag-and-drop calendar interface and automatic link parsing for seamless activity creation.
 
-![PlanIdea Screenshot](https://via.placeholder.com/800x400/6366f1/ffffff?text=PlanIdea+-+Couples+Activity+Planner)
+![DatePlan Screenshot](https://via.placeholder.com/800x400/6366f1/ffffff?text=DatePlan+-+Couples+Activity+Planner)
 
 ## ✨ Features
 
@@ -38,8 +38,8 @@ A beautiful and intuitive web application designed for couples to discover, orga
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/PlanIdea.git
-   cd PlanIdea
+   git clone https://github.com/your-username/DatePlan.git
+   cd DatePlan
    ```
 
 2. **Install dependencies**
@@ -115,7 +115,7 @@ Activities are automatically categorized:
 ## 📁 Project Structure
 
 ```
-PlanIdea/
+DatePlan/
 ├── server.js              # Main server file
 ├── package.json           # Dependencies and scripts
 ├── database/
