@@ -819,6 +819,126 @@ body {
 .category-outdoor { background: #ccfbf1; color: #0f766e; }
 .category-home-activities { background: #fed7aa; color: #c2410c; }
 
+/* Time Modal Specific Styles */
+.modal-body {
+    padding: 1.5rem;
+}
+
+#time-modal-activity,
+#time-modal-date {
+    background: var(--bg-secondary);
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    margin: 0.75rem 0;
+    border-left: 4px solid var(--primary-color);
+}
+
+#time-modal-activity-title,
+#time-modal-selected-date {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+#time-modal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#time-modal .form-group label {
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+#time-modal select,
+#time-modal textarea {
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+}
+
+#time-modal select {
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+#time-modal select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+#time-modal select:hover {
+    border-color: var(--primary-color);
+}
+
+#time-modal select option {
+    padding: 0.5rem;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+}
+
+#time-modal select option:hover,
+#time-modal select option:focus {
+    background: var(--bg-secondary);
+}
+
+#time-modal select::-webkit-scrollbar {
+    width: 8px;
+}
+
+#time-modal select::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+#time-modal select::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+#time-modal select::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-dark);
+}
+
+#time-modal .modal-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+}
+
+/* Mobile responsiveness for time modal */
+@media (max-width: 768px) {
+    #time-modal .modal-content {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+    }
+    
+    #time-modal .modal-body {
+        padding: 1rem;
+    }
+    
+    #time-modal-activity,
+    #time-modal-date {
+        padding: 0.875rem 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    #time-modal .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    #time-modal .modal-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    #time-modal .modal-actions button {
+        width: 100%;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .planner-layout {

@@ -10,7 +10,7 @@ const calendarRoutes = require('./routes/calendar');
 const linkParserRoutes = require('./routes/linkParser');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 
 // Initialize database (singleton)
 const db = Database.getInstance();

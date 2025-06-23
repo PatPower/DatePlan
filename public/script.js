@@ -7,7 +7,7 @@ let calendarEvents = [];
 let draggedActivity = null;
 
 // DOM elements will be assigned after DOM loads
-let activityModal, eventModal, loadingSpinner, toastContainer;
+let activityModal, eventModal, timeModal, loadingSpinner, toastContainer;
 
 // Define critical functions early for global access
 function closeModal(modalId) {
@@ -18,13 +18,13 @@ function closeModal(modalId) {
 window.closeModal = closeModal;
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', async function() {
-    // Assign DOM elements after DOM is loaded
+document.addEventListener('DOMContentLoaded', async function () {    // Assign DOM elements after DOM is loaded
     activityModal = document.getElementById('activity-modal');
     eventModal = document.getElementById('event-modal');
+    timeModal = document.getElementById('time-modal');
     loadingSpinner = document.getElementById('loading-spinner');
     toastContainer = document.getElementById('toast-container');
-    
+
     await initializeApp();
     setupEventListeners();
     await loadData();
@@ -50,7 +50,7 @@ async function initializeApp() {
 function setupEventListeners() {
     // Tab navigation
     document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
+        tab.addEventListener('click', function () {
             switchTab(this.dataset.tab);
         });
     });
@@ -68,7 +68,7 @@ function setupEventListeners() {
 
     // View options
     document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             currentView = this.dataset.view;
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
@@ -79,10 +79,11 @@ function setupEventListeners() {
     // Add activity button
     document.getElementById('add-activity-btn').addEventListener('click', () => {
         openActivityModal();
-    });
-
-    // Activity form
+    });    // Activity form
     document.getElementById('activity-form').addEventListener('submit', handleActivitySubmit);
+
+    // Time form
+    document.getElementById('time-form').addEventListener('submit', handleTimeSubmit);
 
     // URL parser
     document.getElementById('parse-url-btn').addEventListener('click', handleParseUrl);    // Search and filter
@@ -91,7 +92,7 @@ function setupEventListeners() {
 
     // Modal close buttons
     document.querySelectorAll('.modal-close').forEach(closeBtn => {
-        closeBtn.addEventListener('click', function() {
+        closeBtn.addEventListener('click', function () {
             const modal = this.closest('.modal');
             if (modal) {
                 closeModal(modal.id);
@@ -101,7 +102,7 @@ function setupEventListeners() {
 
     // Modal close on backdrop click
     document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
+        modal.addEventListener('click', function (e) {
             if (e.target === this) {
                 closeModal(this.id);
             }
@@ -207,11 +208,11 @@ function populateCategorySelects() {
 function renderCalendar() {
     const calendar = document.getElementById('calendar-grid');
     const monthHeader = document.getElementById('current-month');
-    
+
     // Update month header
-    monthHeader.textContent = currentDate.toLocaleDateString('en-US', { 
-        month: 'long', 
-        year: 'numeric' 
+    monthHeader.textContent = currentDate.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric'
     });
 
     // Clear calendar
@@ -245,7 +246,7 @@ function renderMonthView(calendar) {
     for (let i = 0; i < 42; i++) {
         const cellDate = new Date(startDate);
         cellDate.setDate(startDate.getDate() + i);
-        
+
         const dayElement = createCalendarDay(cellDate, firstDay.getMonth());
         calendar.appendChild(dayElement);
     }
@@ -260,7 +261,7 @@ function renderWeekView(calendar) {
     for (let i = 0; i < 7; i++) {
         const cellDate = new Date(startOfWeek);
         cellDate.setDate(startOfWeek.getDate() + i);
-        
+
         const header = document.createElement('div');
         header.className = 'calendar-day-header';
         header.innerHTML = `
@@ -274,7 +275,7 @@ function renderWeekView(calendar) {
     for (let i = 0; i < 7; i++) {
         const cellDate = new Date(startOfWeek);
         cellDate.setDate(startOfWeek.getDate() + i);
-        
+
         const dayElement = createCalendarDay(cellDate, currentDate.getMonth());
         dayElement.style.minHeight = '200px';
         calendar.appendChild(dayElement);
@@ -285,12 +286,12 @@ function renderWeekView(calendar) {
 function createCalendarDay(date, currentMonth) {
     const dayElement = document.createElement('div');
     dayElement.className = 'calendar-day';
-    
+
     // Add classes for styling
     if (date.getMonth() !== currentMonth) {
         dayElement.classList.add('other-month');
     }
-    
+
     if (isToday(date)) {
         dayElement.classList.add('today');
     }
@@ -304,13 +305,13 @@ function createCalendarDay(date, currentMonth) {
     // Add events for this day
     const eventsContainer = document.createElement('div');
     eventsContainer.className = 'calendar-events';
-    
+
     const dayEvents = getEventsForDay(date);
     dayEvents.forEach(event => {
         const eventElement = createEventElement(event);
         eventsContainer.appendChild(eventElement);
     });
-    
+
     dayElement.appendChild(eventsContainer);
 
     // Add drag and drop functionality
@@ -326,7 +327,7 @@ function createEventElement(event) {
     if (event.completed) {
         eventEl.classList.add('completed');
     }
-    
+
     // Get category color
     const category = categories.find(c => c.name === event.category);
     if (category) {
@@ -345,7 +346,7 @@ function createEventElement(event) {
     `;
 
     eventEl.addEventListener('click', () => showEventDetails(event));
-    
+
     return eventEl;
 }
 
@@ -387,50 +388,18 @@ function handleDragLeave(e) {
 async function handleDrop(e, date) {
     e.preventDefault();
     e.currentTarget.classList.remove('drop-zone');
-    
+
     if (!draggedActivity) return;
 
-    try {
-        // Create calendar event from dropped activity
-        const startDate = new Date(date);
-        startDate.setHours(9, 0, 0, 0); // Default to 9 AM
-        
-        const endDate = new Date(startDate);
-        endDate.setMinutes(endDate.getMinutes() + (draggedActivity.duration || 120));
-
-        const eventData = {
-            activity_id: draggedActivity.id,
-            title: draggedActivity.title,
-            start_date: startDate.toISOString(),
-            end_date: endDate.toISOString(),
-            notes: ''
-        };
-
-        const response = await fetch('/api/calendar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(eventData)
-        });
-
-        if (!response.ok) throw new Error('Failed to create event');
-
-        showToast('Activity scheduled successfully!', 'success');
-        await loadCalendarEvents();
-        renderCalendar();
-        updateStats();
-    } catch (error) {
-        console.error('Error creating event:', error);
-        showToast('Failed to schedule activity', 'error');
-    }
+    // Open time selection modal instead of directly creating event
+    openTimeModal(draggedActivity, date);
 }
 
 // Render activities list (sidebar)
 function renderActivitiesList() {
     const container = document.getElementById('activities-list');
     const filteredActivities = getFilteredActivities();
-    
+
     container.innerHTML = '';
 
     if (filteredActivities.length === 0) {
@@ -449,10 +418,10 @@ function createActivityCard(activity) {
     const card = document.createElement('div');
     card.className = 'activity-card';
     card.draggable = true;
-    
+
     // Get category info
     const category = categories.find(c => c.name === activity.category) || { color: '#6366f1' };
-    const categoryClass = activity.category.toLowerCase().replace(/[^a-z0-9]/g, '-');    card.innerHTML = `
+    const categoryClass = activity.category.toLowerCase().replace(/[^a-z0-9]/g, '-'); card.innerHTML = `
         <div class="activity-header">
             <div class="activity-title">${activity.title}</div>
             <div class="activity-actions">
@@ -478,14 +447,14 @@ function createActivityCard(activity) {
     // Add event listeners for action buttons
     const editBtn = card.querySelector('.edit-btn');
     const deleteBtn = card.querySelector('.delete-btn');
-    
+
     if (editBtn) {
         editBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             editActivity(activity.id);
         });
     }
-    
+
     if (deleteBtn) {
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -515,7 +484,7 @@ function renderActivitiesGrid() {
 function createActivityCardLarge(activity) {
     const card = document.createElement('div');
     card.className = 'activity-card-large';
-    
+
     const category = categories.find(c => c.name === activity.category) || { color: '#6366f1' };
     const categoryClass = activity.category.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
@@ -544,13 +513,13 @@ function createActivityCardLarge(activity) {
     // Add event listeners for action buttons
     const editBtn = card.querySelector('.edit-large-btn');
     const deleteBtn = card.querySelector('.delete-large-btn');
-    
+
     if (editBtn) {
         editBtn.addEventListener('click', () => {
             editActivity(activity.id);
         });
     }
-    
+
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
             deleteActivity(activity.id);
@@ -566,13 +535,13 @@ function getFilteredActivities() {
     const categoryFilter = document.getElementById('category-filter').value;
 
     return activities.filter(activity => {
-        const matchesSearch = !searchTerm || 
+        const matchesSearch = !searchTerm ||
             activity.title.toLowerCase().includes(searchTerm) ||
             (activity.description && activity.description.toLowerCase().includes(searchTerm)) ||
             (activity.location && activity.location.toLowerCase().includes(searchTerm));
-        
+
         const matchesCategory = !categoryFilter || activity.category === categoryFilter;
-        
+
         return matchesSearch && matchesCategory;
     });
 }
@@ -631,10 +600,10 @@ function populateActivityForm(activity) {
 // Handle activity form submission
 async function handleActivitySubmit(e) {
     e.preventDefault();
-    
+
     const form = e.target;
     const isEdit = !!form.dataset.activityId;
-    
+
     const activityData = {
         title: document.getElementById('activity-title').value,
         description: document.getElementById('activity-description').value,
@@ -649,10 +618,10 @@ async function handleActivitySubmit(e) {
 
     try {
         showLoading();
-        
+
         const url = isEdit ? `/api/activities/${form.dataset.activityId}` : '/api/activities';
         const method = isEdit ? 'PUT' : 'POST';
-        
+
         const response = await fetch(url, {
             method: method,
             headers: {
@@ -681,7 +650,7 @@ async function handleActivitySubmit(e) {
 async function handleParseUrl() {
     const urlInput = document.getElementById('activity-url');
     const url = urlInput.value.trim();
-    
+
     if (!url) {
         showToast('Please enter a URL first', 'warning');
         return;
@@ -689,7 +658,7 @@ async function handleParseUrl() {
 
     try {
         showLoading();
-        
+
         const response = await fetch('/api/parse-link', {
             method: 'POST',
             headers: {
@@ -701,7 +670,6 @@ async function handleParseUrl() {
         if (!response.ok) throw new Error('Failed to parse URL');
 
         const data = await response.json();
-        
         // Populate form fields with parsed data
         if (data.title) document.getElementById('activity-title').value = data.title;
         if (data.description) document.getElementById('activity-description').value = data.description;
@@ -710,9 +678,30 @@ async function handleParseUrl() {
         if (data.duration) document.getElementById('activity-duration').value = data.duration;
         if (data.image_url) document.getElementById('activity-image').value = data.image_url;
         if (data.estimated_cost) document.getElementById('activity-cost').value = data.estimated_cost;
-        if (data.rating) document.getElementById('activity-rating').value = data.rating;
+        if (data.rating && data.rating > 0) document.getElementById('activity-rating').value = data.rating;
 
-        showToast('Activity details filled automatically!', 'success');
+        // Show success message with source info
+        let successMessage = 'Activity details filled automatically!';
+        if (data.source) {
+            successMessage = `Details extracted from ${data.source}!`;
+        }
+
+        // Special handling for Instagram posts that require manual input
+        if (data.manual_input_required) {
+            successMessage = `Basic structure created from ${data.source}! Please fill in the specific details about what you'd like to do based on this post.`;
+            showToast(successMessage, 'info');
+
+            // Focus on description field for Instagram posts
+            setTimeout(() => {
+                const descriptionField = document.getElementById('activity-description');
+                if (descriptionField) {
+                    descriptionField.focus();
+                    descriptionField.select();
+                }
+            }, 100);
+        } else {
+            showToast(successMessage, 'success');
+        }
     } catch (error) {
         console.error('Error parsing URL:', error);
         showToast('Failed to parse URL. Please fill details manually.', 'error');
@@ -737,7 +726,7 @@ async function deleteActivity(id) {
 
     try {
         showLoading();
-        
+
         const response = await fetch(`/api/activities/${id}`, {
             method: 'DELETE'
         });
@@ -757,14 +746,103 @@ async function deleteActivity(id) {
     }
 }
 
+// Time Modal Functions
+function openTimeModal(activity, date) {
+    const modal = document.getElementById('time-modal');
+    const activityTitle = document.getElementById('time-modal-activity-title');
+    const selectedDate = document.getElementById('time-modal-selected-date');
+    const timeForm = document.getElementById('time-form');
+    
+    // Store the activity and date for later use
+    timeForm.dataset.activityId = activity.id;
+    timeForm.dataset.selectedDate = date.toISOString();
+    timeForm.dataset.activityDuration = activity.duration || 120;
+    
+    // Populate modal content
+    activityTitle.textContent = activity.title;
+    selectedDate.textContent = date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    // Reset form
+    document.getElementById('event-start-time').value = '09:00';
+    document.getElementById('event-notes').value = '';
+    
+    modal.classList.add('active');
+}
+
+async function handleTimeSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const activityId = form.dataset.activityId;
+    const selectedDate = new Date(form.dataset.selectedDate);
+    const duration = parseInt(form.dataset.activityDuration);
+    const startTime = document.getElementById('event-start-time').value;
+    const notes = document.getElementById('event-notes').value;
+    
+    // Find the activity to get its details
+    const activity = activities.find(a => a.id == activityId);
+    if (!activity) {
+        showToast('Activity not found', 'error');
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        // Parse the time and create start date
+        const [hours, minutes] = startTime.split(':').map(Number);
+        const startDate = new Date(selectedDate);
+        startDate.setHours(hours, minutes, 0, 0);
+        
+        // Calculate end date based on duration
+        const endDate = new Date(startDate);
+        endDate.setMinutes(endDate.getMinutes() + duration);
+        
+        // Create the event data
+        const eventData = {
+            activity_id: activityId,
+            title: activity.title,
+            start_date: startDate.toISOString(),
+            end_date: endDate.toISOString(),
+            notes: notes || ''
+        };
+        
+        const response = await fetch('/api/calendar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(eventData)
+        });
+        
+        if (!response.ok) throw new Error('Failed to create event');
+        
+        showToast('Activity scheduled successfully!', 'success');
+        closeModal('time-modal');
+        await loadCalendarEvents();
+        renderCalendar();
+        updateStats();
+    } catch (error) {
+        console.error('Error creating event:', error);
+        showToast('Failed to schedule activity', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
 // Show event details
 function showEventDetails(event) {
     const modal = document.getElementById('event-modal');
     const detailsContainer = document.getElementById('event-details');
-    
+
     const startDate = new Date(event.start_date);
     const endDate = new Date(event.end_date);
-    
+
     detailsContainer.innerHTML = `
         <div style="padding: 1.5rem;">
             <h4>${event.title}</h4>
@@ -786,23 +864,23 @@ function showEventDetails(event) {
             </div>
         </div>
     `;
-    
+
     // Add event listeners to the buttons
     const toggleBtn = detailsContainer.querySelector('#toggle-completion-btn');
     const deleteBtn = detailsContainer.querySelector('#delete-event-btn');
-    
+
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             toggleEventCompletion(event.id, !event.completed);
         });
     }
-    
+
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
             deleteEvent(event.id);
         });
     }
-    
+
     modal.classList.add('active');
 }
 
@@ -877,18 +955,18 @@ function hideLoading() {
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
-    const icon = type === 'success' ? 'check-circle' : 
-                type === 'error' ? 'exclamation-circle' : 
-                'exclamation-triangle';
-      toast.innerHTML = `
+
+    const icon = type === 'success' ? 'check-circle' :
+        type === 'error' ? 'exclamation-circle' :
+            'exclamation-triangle';
+    toast.innerHTML = `
         <i class="fas fa-${icon}"></i>
         <span>${message}</span>
     `;
-    
+
     const toastContainer = document.getElementById('toast-container');
     toastContainer.appendChild(toast);
-      // Remove toast after 5 seconds
+    // Remove toast after 5 seconds
     setTimeout(() => {
         toast.remove();
     }, 5000);

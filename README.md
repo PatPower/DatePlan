@@ -65,9 +65,10 @@ npm run dev
 
 1. **Manual Entry**: Click "Add Activity" and fill in the details
 2. **Smart Parsing**: Paste a URL from:
-   - Google Maps (restaurants, attractions, locations)
+   - Google Maps (restaurants, attractions, locations) - **Including shortened URLs** (g.co/kgs/...)
    - Yelp (businesses, restaurants)
    - TripAdvisor (activities, attractions)
+   - Instagram posts (manual input workflow)
    - Any website (basic details extracted)
 
 ### Planning Activities
@@ -153,9 +154,10 @@ DatePlan/
 
 The app can automatically extract information from:
 
-- **Google Maps**: Business names, addresses, ratings
+- **Google Maps**: Business names, addresses, ratings (supports full URLs and shortened g.co/kgs/ URLs)
 - **Yelp**: Restaurant details, pricing, ratings, categories
 - **TripAdvisor**: Activity descriptions, ratings, locations
+- **Instagram**: Manual input workflow for activity ideas from posts
 - **Generic Websites**: Page titles, descriptions, images
 
 ## 💡 Tips for Couples
