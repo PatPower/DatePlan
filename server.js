@@ -7,6 +7,7 @@ const path = require('path');
 const Database = require('./database/db');
 const activitiesRoutes = require('./routes/activities');
 const calendarRoutes = require('./routes/calendar');
+const historyRoutes = require('./routes/history');
 const linkParserRoutes = require('./routes/linkParser');
 
 const app = express();
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/api/activities', activitiesRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.use('/api/history', historyRoutes);
 app.use('/api/parse-link', linkParserRoutes);
 
 // Main route

@@ -68,3 +68,23 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+test-api-simple.js
+test-api.bat
+test-basic.js
+test-db.js
+test-direct-parsing.js
+test-direct-simple.js
+test-direct.js
+test-excitement.js
+test-final.js
+test-fixed-parsing.js
+test-maps-simple.js
+test-maps.js
+test-parser.js
+test-quick.js
+test-server.js
+test-simple-parser.js
+test-simple-server.js
+test-step-by-step.js
+test-syntax.js
+test-working.js

@@ -7,23 +7,23 @@ const db = Database.getInstance().getDatabase();
 // Get all calendar events
 router.get('/', (req, res) => {
   const { start, end } = req.query;
-  
+
   let query = `
     SELECT ce.*, a.title as activity_title, a.category, a.location, a.duration, c.color as category_color
     FROM calendar_events ce
     LEFT JOIN activities a ON ce.activity_id = a.id
     LEFT JOIN categories c ON a.category = c.name
   `;
-  
+
   let params = [];
-  
+
   if (start && end) {
     query += ` WHERE ce.start_date >= ? AND ce.end_date <= ?`;
     params = [start, end];
   }
-  
+
   query += ` ORDER BY ce.start_date ASC`;
-  
+
   db.all(query, params, (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -42,7 +42,7 @@ router.get('/:id', (req, res) => {
     LEFT JOIN categories c ON a.category = c.name
     WHERE ce.id = ?
   `;
-  
+
   db.get(query, [req.params.id], (err, row) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -85,12 +85,12 @@ router.post('/', (req, res) => {
     notes || null
   ];
 
-  db.run(query, params, function(err) {
+  db.run(query, params, function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    
+
     // Return the created event with activity details
     const selectQuery = `
       SELECT ce.*, a.title as activity_title, a.category, a.location, a.duration, c.color as category_color
@@ -99,7 +99,7 @@ router.post('/', (req, res) => {
       LEFT JOIN categories c ON a.category = c.name
       WHERE ce.id = ?
     `;
-    
+
     db.get(selectQuery, [this.lastID], (err, row) => {
       if (err) {
         res.status(500).json({ error: err.message });
@@ -118,13 +118,14 @@ router.put('/:id', (req, res) => {
     start_date,
     end_date,
     notes,
-    completed
+    completed,
+    is_archived
   } = req.body;
 
   const query = `
     UPDATE calendar_events SET
     activity_id = ?, title = ?, start_date = ?, end_date = ?, 
-    notes = ?, completed = ?, updated_at = CURRENT_TIMESTAMP
+    notes = ?, completed = ?, is_archived = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `;
 
@@ -135,20 +136,21 @@ router.put('/:id', (req, res) => {
     end_date,
     notes,
     completed || false,
+    is_archived || false,
     req.params.id
   ];
 
-  db.run(query, params, function(err) {
+  db.run(query, params, function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    
+
     if (this.changes === 0) {
       res.status(404).json({ error: 'Calendar event not found' });
       return;
     }
-    
+
     // Return the updated event with activity details
     const selectQuery = `
       SELECT ce.*, a.title as activity_title, a.category, a.location, a.duration, c.color as category_color
@@ -157,7 +159,7 @@ router.put('/:id', (req, res) => {
       LEFT JOIN categories c ON a.category = c.name
       WHERE ce.id = ?
     `;
-    
+
     db.get(selectQuery, [req.params.id], (err, row) => {
       if (err) {
         res.status(500).json({ error: err.message });
@@ -170,17 +172,17 @@ router.put('/:id', (req, res) => {
 
 // Delete calendar event
 router.delete('/:id', (req, res) => {
-  db.run('DELETE FROM calendar_events WHERE id = ?', [req.params.id], function(err) {
+  db.run('DELETE FROM calendar_events WHERE id = ?', [req.params.id], function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    
+
     if (this.changes === 0) {
       res.status(404).json({ error: 'Calendar event not found' });
       return;
     }
-    
+
     res.json({ message: 'Calendar event deleted successfully' });
   });
 });
@@ -188,21 +190,21 @@ router.delete('/:id', (req, res) => {
 // Mark event as completed
 router.patch('/:id/complete', (req, res) => {
   const { completed } = req.body;
-  
+
   db.run(
     'UPDATE calendar_events SET completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
     [completed, req.params.id],
-    function(err) {
+    function (err) {
       if (err) {
         res.status(500).json({ error: err.message });
         return;
       }
-      
+
       if (this.changes === 0) {
         res.status(404).json({ error: 'Calendar event not found' });
         return;
       }
-      
+
       res.json({ message: 'Event completion status updated' });
     }
   );

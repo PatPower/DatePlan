@@ -55,7 +55,7 @@ router.post('/', (req, res) => {
     url,
     image_url,
     estimated_cost,
-    rating
+    excitement
   } = req.body;
 
   if (!title) {
@@ -65,7 +65,7 @@ router.post('/', (req, res) => {
 
   const query = `
     INSERT INTO activities 
-    (title, description, category, location, duration, url, image_url, estimated_cost, rating, updated_at)
+    (title, description, category, location, duration, url, image_url, estimated_cost, excitement, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
   `;
 
@@ -78,7 +78,7 @@ router.post('/', (req, res) => {
     url || null,
     image_url || null,
     estimated_cost || 0,
-    rating || 0
+    excitement || 5
   ];
 
   db.run(query, params, function(err) {
@@ -109,14 +109,14 @@ router.put('/:id', (req, res) => {
     url,
     image_url,
     estimated_cost,
-    rating
+    excitement
   } = req.body;
 
   const query = `
     UPDATE activities SET
     title = ?, description = ?, category = ?, location = ?, 
     duration = ?, url = ?, image_url = ?, estimated_cost = ?, 
-    rating = ?, updated_at = CURRENT_TIMESTAMP
+    excitement = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `;
 
@@ -129,7 +129,7 @@ router.put('/:id', (req, res) => {
     url,
     image_url,
     estimated_cost,
-    rating,
+    excitement,
     req.params.id
   ];
 

@@ -75,16 +75,17 @@
                             <div class="view-options">
                                 <button class="view-btn active" data-view="month">Month</button>
                                 <button class="view-btn" data-view="week">Week</button>
-                            </div>
+                            </div>                        </div>
+                        <div class="mobile-calendar-hint">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Drag activities to calendar or tap calendar days to schedule</span>
                         </div>
                         <div class="calendar-grid" id="calendar-grid">
                             <!-- Calendar will be generated here -->
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Activities Tab -->
+            </div>            <!-- Activities Tab -->
             <div class="tab-content" id="activities-tab">
                 <div class="activities-manager">
                     <div class="activities-header">
@@ -104,8 +105,34 @@
                             </div>
                         </div>
                     </div>
-                    <div class="activities-grid" id="activities-grid">
-                        <!-- Activity cards will be loaded here -->
+                      <!-- Activity Ideas Section -->
+                    <div class="activities-section">
+                        <div class="section-header">
+                            <div class="section-title-row">
+                                <div>
+                                    <h3><i class="fas fa-lightbulb"></i> Activity Ideas</h3>
+                                    <p class="section-description">Activities you've collected but haven't scheduled yet</p>
+                                </div>
+                                <button class="btn-primary add-activity-inline" id="add-activity-inline-btn">
+                                    <i class="fas fa-plus"></i>
+                                    Add Activity
+                                </button>
+                            </div>
+                        </div>
+                        <div class="activities-grid" id="activities-grid">
+                            <!-- Activity cards will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Activity History Section -->
+                    <div class="activities-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-history"></i> Activity History</h3>
+                            <p class="section-description">Activities you've planned and completed</p>
+                        </div>
+                        <div class="history-grid" id="history-grid">
+                            <!-- Planned/completed activities will be loaded here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -160,15 +187,15 @@
                 <div class="form-group">
                     <label for="activity-location">Location</label>
                     <input type="text" id="activity-location" placeholder="Where will this happen?">
-                </div>
-                  <div class="form-row">
+                </div>                <div class="form-row">
                     <div class="form-group">
                         <label for="activity-cost">Estimated Cost ($)</label>
                         <input type="number" id="activity-cost" min="0" step="0.01" value="0">
                     </div>
                     <div class="form-group">
-                        <label for="activity-rating">Rating (1-5, optional)</label>
-                        <input type="number" id="activity-rating" min="0" max="5" step="0.1" value="0" placeholder="0 = No rating">
+                        <label for="activity-excitement">Excitement Level (1-10)</label>
+                        <input type="number" id="activity-excitement" min="1" max="10" step="1" value="5" placeholder="How excited are you? (1-10)">
+                        <small class="form-help">1 = Meh, 10 = Super excited!</small>
                     </div>
                 </div>
                 
@@ -188,20 +215,64 @@
                 </div>
             </form>
         </div>
-    </div>
-
-    <!-- Event Details Modal -->
+    </div>    <!-- Event Details Modal -->
     <div class="modal" id="event-modal">
-        <div class="modal-content">
+        <div class="modal-content event-modal-content">
             <div class="modal-header">
                 <h3 id="event-modal-title">Event Details</h3>
                 <button class="modal-close" onclick="closeModal('event-modal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div id="event-details">
-                <!-- Event details will be loaded here -->
-            </div>        </div>
+            <div class="event-card">
+                <div class="event-image-container">
+                    <img id="event-image" src="" alt="Event image" class="event-image" style="display: none;">
+                    <div id="event-image-placeholder" class="event-image-placeholder">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+                <div class="event-content">
+                    <div class="event-header">
+                        <h4 id="event-title"></h4>
+                        <div class="event-badges">
+                            <span id="event-category" class="category-badge"></span>
+                            <span id="event-excitement" class="excitement-badge"></span>
+                        </div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-detail-row">
+                            <i class="fas fa-clock"></i>
+                            <span id="event-time"></span>
+                        </div>
+                        <div class="event-detail-row" id="event-location-row" style="display: none;">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="event-location"></span>
+                        </div>
+                        <div class="event-detail-row" id="event-duration-row">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span id="event-duration"></span>
+                        </div>
+                        <div class="event-detail-row" id="event-cost-row" style="display: none;">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span id="event-cost"></span>
+                        </div>
+                    </div>
+                    <div class="event-description" id="event-description" style="display: none;">
+                    </div>
+                    <div class="event-actions">
+                        <button id="edit-event-btn" class="btn-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button id="delete-event-btn" class="btn-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button id="complete-event-btn" class="btn-success">
+                            <i class="fas fa-check"></i> Mark Complete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Time Selection Modal -->
@@ -274,6 +345,29 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>    <!-- Event Confirmation Modal -->
+    <div class="modal" id="event-confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Event Scheduled!</h3>
+                <button class="modal-close" onclick="console.log('X button clicked'); closeModal('event-confirmation-modal');">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="event-confirmation-details">
+                    <!-- Event confirmation details will be loaded here -->
+                </div>                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="console.log('Close button clicked'); closeModal('event-confirmation-modal');">
+                        Close
+                    </button>
+                    <button type="button" class="btn-primary" id="jump-to-event-btn">
+                        <i class="fas fa-calendar-day"></i>
+                        Jump to Event
+                    </button>
+                </div>
             </div>
         </div>
     </div>
