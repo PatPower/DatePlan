@@ -667,17 +667,24 @@ function openActivitySelectionModal(date) {
     // Clear and populate activities list
     activitiesList.innerHTML = '';
 
-    const filteredActivities = getFilteredActivities();
-
-    if (filteredActivities.length === 0) {
+    const filteredActivities = getFilteredActivities();    if (filteredActivities.length === 0) {
         activitiesList.innerHTML = `
             <div class="no-activities-message">
                 <p>No activities available to schedule.</p>
-                <button class="btn-primary" onclick="closeModal('activity-selection-modal'); openActivityModal();">
+                <button class="btn-primary" id="create-new-activity-btn">
                     <i class="fas fa-plus"></i> Create New Activity
                 </button>
             </div>
         `;
+        
+        // Add event listener for the create new activity button
+        const createBtn = document.getElementById('create-new-activity-btn');
+        if (createBtn) {
+            createBtn.addEventListener('click', function() {
+                closeModal('activity-selection-modal');
+                openActivityModal();
+            });
+        }
     } else {
         filteredActivities.forEach(activity => {
             const activityItem = createActivitySelectionItem(activity, date);
@@ -695,7 +702,7 @@ function createActivitySelectionModal() {
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Select Activity to Schedule</h3>
-                    <button class="modal-close" onclick="closeModal('activity-selection-modal')">
+                    <button class="modal-close" id="activity-selection-close-btn">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -712,6 +719,30 @@ function createActivitySelectionModal() {
     `;
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Set up event listeners after the modal is created
+    const modal = document.getElementById('activity-selection-modal');
+    const closeBtn = document.getElementById('activity-selection-close-btn');
+    
+    // Close button event listener
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Activity selection modal close button clicked');
+            closeModal('activity-selection-modal');
+        });
+    }
+    
+    // Modal backdrop click listener
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                console.log('Activity selection modal backdrop clicked');
+                closeModal('activity-selection-modal');
+            }
+        });
+    }
 }
 
 // Helper function for mobile activity selection location
@@ -2394,6 +2425,8 @@ function showHistoryDetails(historyItem) {
 }
 
 // Make additional functions globally accessible for onclick handlers
+window.openActivityModal = openActivityModal;
+window.openTimeModal = openTimeModal;
 window.editActivity = editActivity;
 window.deleteActivity = deleteActivity;
 window.toggleEventCompletion = toggleEventCompletion;
