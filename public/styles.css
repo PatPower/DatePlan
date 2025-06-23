@@ -1623,12 +1623,12 @@ body {
     }
     
     .activities-sidebar {
-        order: 2;
+        order: 1;
         max-height: 400px;
     }
     
     .calendar-container {
-        order: 1;
+        order: 2;
     }
     
     .header-content {
