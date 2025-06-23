@@ -1029,7 +1029,7 @@ body {
 }
 
 .modal-header {
-    padding: 1.5rem;
+    padding: 0.9rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -2117,7 +2117,7 @@ body {
 .event-image-container {
     position: relative;
     width: 100%;
-    height: 140px;
+    height: 240px;
     overflow: hidden;
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
     background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
@@ -2142,12 +2142,12 @@ body {
 }
 
 .event-content {
-    padding: 1rem;
+    padding: 0.75rem;
 }
 
 .event-header {
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -2191,18 +2191,18 @@ body {
 }
 
 .event-details {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     background: var(--bg-secondary);
     border-radius: var(--border-radius);
-    padding: 0.75rem;
+    padding: 0.6rem;
 }
 
 .event-detail-row {
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
-    margin-bottom: 0.5rem;
-    padding: 0.35rem 0;
+    margin-bottom: 0.4rem;
+    padding: 0.25rem 0;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -2247,10 +2247,10 @@ body {
 
 .event-description {
     background: var(--bg-secondary);
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     font-size: 0.9rem;
     line-height: 1.6;
     color: var(--text-secondary);
@@ -2322,13 +2322,11 @@ body {
         width: calc(100% - 1rem);
         max-height: 90vh;
     }
-    
-    .event-image-container {
-        height: 120px;
+      .event-image-container {
+        height: 160px;
     }
-    
-    .event-content {
-        padding: 0.75rem;
+      .event-content {
+        padding: 0.6rem;
     }
     
     .event-header h4 {
