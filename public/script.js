@@ -1048,9 +1048,6 @@ function getHistoryCardActions(historyItem) {
             <button class="btn-warning btn-small move-back-to-ideas-btn" data-history-id="${historyItem.id}">
                 <i class="fas fa-undo"></i> Move Back to Ideas
             </button>
-            <button class="btn-secondary btn-small view-history-btn" data-history-id="${historyItem.id}">
-                <i class="fas fa-info-circle"></i> View Details
-            </button>
             <button class="btn-danger btn-small delete-history-btn" data-history-id="${historyItem.id}">
                 <i class="fas fa-trash"></i> Delete
             </button>
@@ -1073,18 +1070,11 @@ function setupHistoryCardEventListeners(card, historyItem) {
     const isCompleted = historyItem.type === 'completed'; if (isCompleted && historyItem.type === 'completed') {
         // Completed activities from history table
         const moveBackBtn = card.querySelector('.move-back-to-ideas-btn');
-        const viewBtn = card.querySelector('.view-history-btn');
         const deleteBtn = card.querySelector('.delete-history-btn');
 
         if (moveBackBtn) {
             moveBackBtn.addEventListener('click', () => {
                 moveHistoryItemBackToIdeas(historyItem.id);
-            });
-        }
-
-        if (viewBtn) {
-            viewBtn.addEventListener('click', () => {
-                showHistoryDetails(historyItem);
             });
         }
 
@@ -1490,7 +1480,7 @@ async function handleParseUrl() {
         if (data.location) document.getElementById('activity-location').value = data.location;
         if (data.duration) document.getElementById('activity-duration').value = data.duration;
         if (data.image_url) document.getElementById('activity-image').value = data.image_url;
-        if (data.estimated_cost) document.getElementById('activity-cost').value = data.estimated_cost;        if (data.excitement && data.excitement > 0) {
+        if (data.estimated_cost) document.getElementById('activity-cost').value = data.estimated_cost; if (data.excitement && data.excitement > 0) {
             document.getElementById('activity-excitement').value = data.excitement;
         } else if (data.rating && data.rating > 0) {
             // Convert legacy rating (1-5) to excitement (1-10)
@@ -1676,7 +1666,7 @@ async function handleTimeSubmit(e) {
 // Show event details
 function showEventDetails(event) {
     const modal = document.getElementById('event-modal');
-    
+
     const startDate = new Date(event.start_date);
     const endDate = new Date(event.end_date);
     const activity = activities.find(a => a.id == event.activity_id);
@@ -1687,7 +1677,7 @@ function showEventDetails(event) {
     // Update event image
     const eventImage = document.getElementById('event-image');
     const imagePlaceholder = document.getElementById('event-image-placeholder');
-    
+
     if (activity && activity.image_url) {
         eventImage.src = activity.image_url;
         eventImage.style.display = 'block';
@@ -1720,14 +1710,14 @@ function showEventDetails(event) {
     }
 
     // Update time
-    document.getElementById('event-time').textContent = 
-        `${startDate.toLocaleDateString()} • ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}`;
-
-    // Update location
+    document.getElementById('event-time').textContent =
+        `${startDate.toLocaleDateString()} • ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}`;    // Update location with clickable link
     const locationRow = document.getElementById('event-location-row');
     const locationSpan = document.getElementById('event-location');
-    if (activity && activity.location) {
-        locationSpan.textContent = activity.location;
+    const location = (activity && activity.location) || event.location || event.activity_location || event.address || '';
+    if (location) {
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+        locationSpan.innerHTML = `<a href="${googleMapsUrl}" target="_blank" class="location-link">${location}</a>`;
         locationRow.style.display = 'flex';
     } else {
         locationRow.style.display = 'none';
