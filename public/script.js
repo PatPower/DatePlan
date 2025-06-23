@@ -1020,11 +1020,12 @@ function createHistoryCard(historyItem) {
             <div class="history-card-duration">
                 <i class="fas fa-clock"></i> ${historyItem.duration || 120}min
             </div>
-        </div>
-        ${historyItem.location ? `
+        </div>        ${historyItem.location ? `
             <div class="history-card-location">
                 <i class="fas fa-map-marker-alt"></i>
-                <span>${historyItem.location}</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(historyItem.location)}" target="_blank" rel="noopener noreferrer" class="location-link" title="Search in Google Maps">
+                    ${historyItem.location}
+                </a>
             </div>
         ` : ''}
         <div class="history-card-actions">
@@ -2108,16 +2109,12 @@ function createLocationLink(activity) {
         activity.url.includes('maps.google') ||
         activity.url.includes('g.co/kgs') ||
         activity.url.includes('maps.app.goo.gl')
-    );
-
-    if (isGoogleMapsUrl) {
+    ); if (isGoogleMapsUrl) {
         // Use the original Google Maps URL
         return `
             <div class="activity-location">
-                <i class="fas fa-map-marker-alt"></i>
                 <a href="${activity.url}" target="_blank" rel="noopener noreferrer" class="location-link" title="Open in Google Maps">
                     ${activity.location}
-                    <i class="fas fa-external-link-alt location-link-icon"></i>
                 </a>
             </div>
         `;
@@ -2128,10 +2125,8 @@ function createLocationLink(activity) {
 
         return `
             <div class="activity-location">
-                <i class="fas fa-map-marker-alt"></i>
                 <a href="${mapsSearchUrl}" target="_blank" rel="noopener noreferrer" class="location-link" title="Search in Google Maps">
                     ${activity.location}
-                    <i class="fas fa-external-link-alt location-link-icon"></i>
                 </a>
             </div>
         `;
@@ -2139,7 +2134,6 @@ function createLocationLink(activity) {
         // Fallback for non-specific locations
         return `
             <div class="activity-location">
-                <i class="fas fa-map-marker-alt"></i>
                 <span class="location-text">${activity.location}</span>
             </div>
         `;
